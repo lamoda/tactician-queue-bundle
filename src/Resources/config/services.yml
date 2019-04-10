@@ -1,0 +1,47 @@
+
+services:
+    Lamoda\TacticianQueue\Middleware\QueueProducerStrategy\ChainedStrategy:
+        class: Lamoda\TacticianQueue\Middleware\QueueProducerStrategy\ChainedStrategy
+
+    Lamoda\TacticianQueue\Middleware\QueueMiddleware:
+        class: Lamoda\TacticianQueue\Middleware\QueueMiddleware
+        arguments:
+            - '@lamoda_queue.factory.publisher'
+            - '@Lamoda\TacticianQueue\Middleware\QueueProducerStrategy\ChainedStrategy'
+
+    Lamoda\TacticianQueue\Middleware\QueuePublishMiddleware:
+        class: Lamoda\TacticianQueue\Middleware\QueuePublishMiddleware
+        arguments:
+            - '@lamoda_queue.factory.publisher'
+
+    Lamoda\TacticianQueue\Handler\CommandHandler:
+        class: Lamoda\TacticianQueue\Handler\CommandHandler
+        public: true
+        arguments:
+            - '@lamoda_tactician_queue.command_bus'
+        tags:
+            - { name: queue.handler, handle: Lamoda\TacticianQueue\Job\CommandJob }
+
+    Lamoda\TacticianQueue\Serializer\CommandSerializationHandler:
+        class: Lamoda\TacticianQueue\Serializer\CommandSerializationHandler
+        arguments:
+            - '@lamoda_tactician_queue.command_serializer'
+        tags:
+            - { name: jms_serializer.subscribing_handler }
+
+    lamoda_tactician_queue.command_serializer.encoders.json_encoder:
+        class: Symfony\Component\Serializer\Encoder\JsonEncoder
+
+    lamoda_tactician_queue.command_serializer.normalizers.property_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\PropertyNormalizer
+
+    lamoda_tactician_queue.default_command_serializer:
+        class: Symfony\Component\Serializer\Serializer
+        arguments:
+            - [ '@lamoda_tactician_queue.command_serializer.normalizers.property_normalizer' ]
+            - [ '@lamoda_tactician_queue.command_serializer.encoders.json_encoder' ]
+
+    lamoda_tactician_queue.command_bus: '@tactician.commandbus'
+    lamoda_tactician_queue.command_serializer: '@lamoda_tactician_queue.default_command_serializer'
+    lamoda_tactician_queue.middleware: '@Lamoda\TacticianQueue\Middleware\QueueMiddleware'
+    lamoda_tactician_queue.publish.middleware: '@Lamoda\TacticianQueue\Middleware\QueuePublishMiddleware'

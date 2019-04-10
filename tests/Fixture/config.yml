@@ -1,0 +1,58 @@
+framework:
+    secret: dummy
+    validation:
+        enable_annotations: true
+    test: true
+
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver: pdo_sqlite
+                memory: true
+    orm:
+
+tactician:
+    commandbus:
+        default:
+            middleware:
+                - lamoda_tactician_queue.middleware # Detect if we should pass commands to the queue and backward
+                - tactician.middleware.command_handler # Actually passes command to the handler
+
+lamoda_queue:
+    entity_class: Lamoda\TacticianQueueBundle\Tests\Fixture\EntityClass
+    max_attempts: 1
+    batch_size_per_republish: 1
+    batch_size_per_requeue: 1
+
+lamoda_tactician_queue:
+    tactician_id: tactician.commandbus # Command bus service id
+
+services:
+    _defaults:
+        public: true
+
+    lamoda_queue.factory.publisher:
+        synthetic: true
+
+    Lamoda\TacticianQueueBundle\Tests\Fixture\TestHandler:
+        class: Lamoda\TacticianQueueBundle\Tests\Fixture\TestHandler
+        tags:
+            - { name: tactician.handler, typehints: true }
+
+    Lamoda\TacticianQueueBundle\Tests\Fixture\OtherHandler:
+        class: Lamoda\TacticianQueueBundle\Tests\Fixture\OtherHandler
+        tags:
+            - { name: tactician.handler, typehints: true }
+
+    command_list_command_job_strategy:
+        class: Lamoda\TacticianQueue\Middleware\QueueProducerStrategy\CommandsListToCommandJobStrategy
+        arguments:
+            - test
+            - test
+            - [ Lamoda\TacticianQueueBundle\Tests\Fixture\TestCommand ]
+        tags:
+            - { name: tactician_queue.job_producing_strategy }
+
+    test.tactician.commandbus: '@tactician.commandbus'

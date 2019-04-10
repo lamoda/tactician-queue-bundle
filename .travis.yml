@@ -1,0 +1,36 @@
+language: php
+
+php:
+    - 7.1
+    - 7.2
+    - 7.3
+    - 7.4snapshot
+    # php8 is not supported yet
+    #- nightly
+
+env:
+    matrix:
+        - DEPENDENCIES=high
+        - DEPENDENCIES=low
+    global:
+        - DEFAULT_COMPOSER_FLAGS="--prefer-dist --no-interaction --no-ansi --no-progress --no-suggest"
+
+matrix:
+    fast_finish: true
+    allow_failures:
+        - php: 7.4snapshot
+    exclude:
+        # doctrine/orm < 2.6.3 is not compatible with php7.3
+        # remove this when lamoda/queue-bundle updates min requirements for doctrine
+        - php: 7.3
+          env: DEPENDENCIES=low
+        - php: 7.4snapshot
+          env: DEPENDENCIES=low
+
+install:
+    - if [[ "$DEPENDENCIES" = 'high' ]]; then travis_retry composer update $DEFAULT_COMPOSER_FLAGS; fi
+    - if [[ "$DEPENDENCIES" = 'low' ]]; then travis_retry composer update $DEFAULT_COMPOSER_FLAGS --prefer-lowest; fi
+
+cache:
+    directories:
+        - $HOME/.composer/cache
