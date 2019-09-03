@@ -27,7 +27,10 @@ class LamodaTacticianQueueExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
-        $container->setAlias('lamoda_tactician_queue.command_serializer', $config['tactician_id']);
+        $container->setAlias(
+            'lamoda_tactician_queue.command_bus',
+            $config['tactician_id']
+        );
         $container->setAlias(
             'lamoda_tactician_queue.command_serializer',
             $config['command_serializer_id']

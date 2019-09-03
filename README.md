@@ -18,7 +18,7 @@ composer require lamoda/tactician-queue-bundle
 
 ## Configuration
 
-Before usage, please documentation for [lamoda/queue-bundle](https://github.com/lamoda/queue-bundle)
+Before usage, please read the documentation for [lamoda/queue-bundle](https://github.com/lamoda/queue-bundle)
 
 Bundle provides special middleware for tactician integration. This middleware add supports
 of async command execution, event with scheduling.
@@ -29,6 +29,7 @@ To enable this feature do the following:
     ```yaml
     lamoda_tactician_queue:
         tactician_id: tactician.commandbus # Command bus service id
+        command_serializer_id: lamoda_tactician_queue.default_command_serializer # Symfony serializer
 
     ```
 2. Add at least one strategy, that will convert commands into jobs:
