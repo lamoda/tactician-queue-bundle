@@ -4,7 +4,7 @@ php:
     - 7.1
     - 7.2
     - 7.3
-    - 7.4snapshot
+    - 7.4
     # php8 is not supported yet
     #- nightly
 
@@ -17,15 +17,6 @@ env:
 
 matrix:
     fast_finish: true
-    allow_failures:
-        - php: 7.4snapshot
-    exclude:
-        # doctrine/orm < 2.6.3 is not compatible with php7.3
-        # remove this when lamoda/queue-bundle updates min requirements for doctrine
-        - php: 7.3
-          env: DEPENDENCIES=low
-        - php: 7.4snapshot
-          env: DEPENDENCIES=low
 
 install:
     - if [[ "$DEPENDENCIES" = 'high' ]]; then COMPOSER_MEMORY_LIMIT=2G travis_retry composer update $DEFAULT_COMPOSER_FLAGS; fi

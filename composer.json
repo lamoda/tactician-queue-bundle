@@ -12,15 +12,16 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.1",
-        "lamoda/queue-bundle": "^1.0",
+        "doctrine/orm": "^2.6.3",
+        "lamoda/queue-bundle": "^1.0 || ^2.0",
         "lamoda/tactician-queue": "^1.0",
         "league/tactician": "^1.0",
+        "league/tactician-bundle": "^1.1.17",
         "symfony/serializer": "^3.4 || ^4.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.14",
-        "league/tactician-bundle": "^1.1",
-        "phpunit/phpunit": "^7.5",
+        "phpunit/phpunit": "^7.5.15",
         "symfony/symfony": "^3.4 || ^4.0"
     },
     "autoload": {
